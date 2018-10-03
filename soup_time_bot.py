@@ -1,55 +1,21 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <strings.h>
-#include <netinet/tcp.h>
-#include <sys/uio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <stdio.h>
-#include <string.h>
+import tweepy as tp
+import time
+import os
 
+# credentials to login to twitter api
+consumer_key = '0FPbIt83beNU8RWCRI1uaV9hh'
+consumer_secret = 'IKW07eVfulTLm5s150v1fbD28gEUNERJyMJWUtS8eTKgU5DQay'
+access_token = '1017954633967329280-FzlzI4CN6oBmhV4v2oWZnDyDmm8JKt'
+access_secret = 'aE5CsM7sHE7zXxz8lHUiU6FJBNAq6jzvWr6xK5r33XD3a'
 
+# login to twitter account api
+auth = tp.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+api = tp.API(auth)
 
-int main (int argc, char* argv[]) {
-	const int server_port = 3579;
-	char send_string[256];	
-	char server_name[] = "127.0.0.1";
-
-	printf("What should I send?\n");
-	scanf("%s", send_string);
-	
-
-	// figure out the IP address
-	struct hostent* host = gethostbyname(server_name);
-	// set up the data structure
-	sockaddr_in sendSockAddr;
-	bzero((char*) &sendSockAddr, sizeof(sendSockAddr));
-	sendSockAddr.sin_family = AF_INET;
-	sendSockAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*(struct in_addr*)*host->h_addr_list));
-	sendSockAddr.sin_port = htons(server_port);
-
-	// create the socket
-	
-	int clientSd = socket(AF_INET, SOCK_STREAM, 0);
-
-	// connect <-- this makes me a client!
-	
-	int connectStatus = connect(clientSd, (sockaddr*)&sendSockAddr, sizeof(sendSockAddr));
-
-	if(connectStatus < 0) {
-		printf("Failed to connect");
-		return -1;
-	}
-
-	int write_result = write(clientSd, send_string, strlen(send_string));
-
-	char result_value[256];
-	int nRead = read(clientSd, result_value, strlen(send_string));
-	printf ("\n%s\n", send_string);
-	close(clientSd);
-	return 0;
-}
+os.chdir('soup')
+# iterates over pictures in models folder
+loop = True
+while loop == True:
+    api.update_with_media("soup_image.jpg")
+time.sleep(60)
